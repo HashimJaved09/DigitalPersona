@@ -46,6 +46,8 @@ namespace UareUSampleCSharp
                     this.imgFile = (byte[])dt.Rows[0]["Image_File"];
                     this.right_thumb = dt.Rows[0]["Right_Thumb"].ToString();
 
+                    this.thumbAnswer.Text = ((this.right_thumb != "" && this.right_thumb.Length > 0) ? "YES" : "NO");
+
                     if (this.imgName.Length > 0 || this.imgFile.Length > 1)
                     {
                         string ext = this.imgName.Split('.').Last();

@@ -38,7 +38,7 @@ namespace UareUSampleCSharp
             preenrollmentFmds = new List<Fmd>();
             count = 0;
 
-            SendMessage(Action.SendMessage, "Place Right Thumb on the device.");
+            SendMessage(Action.SendMessage, "Place your Right Thumb on the device.");
 
             if (!_sender.OpenReader())
             {
@@ -55,6 +55,7 @@ namespace UareUSampleCSharp
         {
             try
             {
+                int status = 0;
                 Database db = new Database();
                 string nameDTO = this.nameTextBox.Text.Trim();
                 string guardianDTO = guardianTextBox.Text.Replace("-", "");
@@ -91,7 +92,22 @@ namespace UareUSampleCSharp
                     return;
                 }
 
-                int status = db.insertData(nameDTO, guardianDTO, cnicDTO, phoneDTO, addressDTO, notesDTO, rightThumbDTO, imageNameDTO, imageFileDTO);
+                if (this.rightThumb == "")
+                {
+                    DialogResult dr = MessageBox.Show("Save without scanning thumb?", "Confirmation", MessageBoxButtons.YesNo);
+                    if (dr == DialogResult.Yes)
+                    {
+                        status = db.insertData(nameDTO, guardianDTO, cnicDTO, phoneDTO, addressDTO, notesDTO, rightThumbDTO, imageNameDTO, imageFileDTO);
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    status = db.insertData(nameDTO, guardianDTO, cnicDTO, phoneDTO, addressDTO, notesDTO, rightThumbDTO, imageNameDTO, imageFileDTO);
+                }
 
                 if (status == 1)
                 {
@@ -113,32 +129,39 @@ namespace UareUSampleCSharp
 
         private void btnUploadPicture_Click(object sender, EventArgs e)
         {
-            Thread t = new Thread((ThreadStart)(() =>
+            try
             {
-                OpenFileDialog saveFileDialog1 = new OpenFileDialog();
-
-                saveFileDialog1.Filter = "Image Files (*.jpg;*.jpeg;*.png;*.gif;)|*.jpg;*.jpeg;*.png;*.gif";
-                saveFileDialog1.FilterIndex = 2;
-                saveFileDialog1.RestoreDirectory = true;
-
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                Thread t = new Thread((ThreadStart)(() =>
                 {
-                    selectedPath = saveFileDialog1.FileName;
+                    OpenFileDialog saveFileDialog1 = new OpenFileDialog();
+
+                    saveFileDialog1.Filter = "Image Files (*.jpg;*.jpeg;*.png;*.gif;)|*.jpg;*.jpeg;*.png;*.gif";
+                    saveFileDialog1.FilterIndex = 2;
+                    saveFileDialog1.RestoreDirectory = true;
+
+                    if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                    {
+                        selectedPath = saveFileDialog1.FileName;
+                    }
+                }));
+
+                // Run your code from a thread that joins the STA Thread
+                t.SetApartmentState(ApartmentState.STA);
+                t.Start();
+                t.Join();
+
+                image_name = selectedPath;
+
+                if (!image_name.Equals(""))
+                {
+                    image_file = File.ReadAllBytes(selectedPath);
+
+                    this.picture.Image = Image.FromFile(image_name);
                 }
-            }));
-
-            // Run your code from a thread that joins the STA Thread
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-            t.Join();
-
-            image_name = selectedPath;
-
-            if (!image_name.Equals(""))
+            }
+            catch (Exception ex)
             {
-                image_file = File.ReadAllBytes(selectedPath);
-
-                this.picture.Image = Image.FromFile(image_name);
+                Console.WriteLine("Error occured while Uploading/Canceling Picture: " + ex.ToString());
             }
         }
 
@@ -351,6 +374,7 @@ namespace UareUSampleCSharp
             this.txtEnroll.Text = "";
             this.picture.Image = null;
             this.enrollPictureBox.Image = null;
+            SendMessage(Action.SendMessage, "Place your Right Thumb on the device.");
         }
 
         #endregion

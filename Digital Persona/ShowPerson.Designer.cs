@@ -40,6 +40,8 @@
             this.cnicTextBox = new System.Windows.Forms.MaskedTextBox();
             this.phoneTextBox = new System.Windows.Forms.MaskedTextBox();
             this.pictureBox = new System.Windows.Forms.PictureBox();
+            this.thumbScanned = new System.Windows.Forms.Label();
+            this.thumbAnswer = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -143,11 +145,32 @@
             this.pictureBox.TabIndex = 20;
             this.pictureBox.TabStop = false;
             // 
+            // thumbScanned
+            // 
+            this.thumbScanned.AutoSize = true;
+            this.thumbScanned.Location = new System.Drawing.Point(482, 137);
+            this.thumbScanned.Name = "thumbScanned";
+            this.thumbScanned.Size = new System.Drawing.Size(86, 13);
+            this.thumbScanned.TabIndex = 21;
+            this.thumbScanned.Text = "Thumb Scanned";
+            // 
+            // thumbAnswer
+            // 
+            this.thumbAnswer.AutoSize = true;
+            this.thumbAnswer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.thumbAnswer.Location = new System.Drawing.Point(567, 137);
+            this.thumbAnswer.Name = "thumbAnswer";
+            this.thumbAnswer.Size = new System.Drawing.Size(25, 13);
+            this.thumbAnswer.TabIndex = 22;
+            this.thumbAnswer.Text = "NO";
+            // 
             // ShowPerson
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(635, 324);
+            this.Controls.Add(this.thumbAnswer);
+            this.Controls.Add(this.thumbScanned);
             this.Controls.Add(this.pictureBox);
             this.Controls.Add(this.phoneTextBox);
             this.Controls.Add(this.cnicTextBox);
@@ -183,5 +206,7 @@
         private System.Windows.Forms.MaskedTextBox cnicTextBox;
         private System.Windows.Forms.MaskedTextBox phoneTextBox;
         private System.Windows.Forms.PictureBox pictureBox;
+        private System.Windows.Forms.Label thumbScanned;
+        private System.Windows.Forms.Label thumbAnswer;
     }
 }

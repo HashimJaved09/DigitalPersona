@@ -16,14 +16,10 @@ namespace UareUSampleCSharp
         List<int> IDs = new List<int>();
         List<Fmd> fmds = new List<Fmd>();
         Dictionary<Fmd, int> fmdsDic = new Dictionary<Fmd, int>();
-        Dictionary<int, Fmd> matchedFmds = new Dictionary<int, Fmd>();
         private const int PROBABILITY_ONE = 0x7fffffff;
 
         private const int DPFJ_PROBABILITY_ONE = 0x7fffffff;
-        private Fmd rightIndex;
-        private Fmd rightThumb;
         private Fmd anyFinger;
-        private int count;
 
         public Identification()
         {
@@ -40,10 +36,7 @@ namespace UareUSampleCSharp
             getData();
 
             txtIdentify.Text = string.Empty;
-            rightIndex = null;
-            rightThumb = null;
             anyFinger = null;
-            count = 0;
 
             SendMessage(Action.SendMessage, "Place your Right Thumb on the device.");
 
@@ -74,6 +67,11 @@ namespace UareUSampleCSharp
                         fmdsDic.Add(temp, (int)row["iPersonID"]);
                     }
                 }
+                if (dt.Rows.Count == 0)
+                {
+                    MessageBox.Show("There are no finger prints saved in the Database yet!");
+                    this.Close();
+                }
             }
             catch (Exception e)
             {
@@ -93,6 +91,8 @@ namespace UareUSampleCSharp
                 if (!_sender.CheckCaptureResult(captureResult)) return;
 
                 SendMessage(Action.SendMessage, "A finger was captured.");
+
+                IDs.Clear();
 
                 DataResult<Fmd> resultConversion = FeatureExtraction.CreateFmdFromFid(captureResult.Data, Constants.Formats.Fmd.ANSI);
                 if (captureResult.ResultCode != Constants.ResultCode.DP_SUCCESS)
@@ -115,7 +115,7 @@ namespace UareUSampleCSharp
                     }
                 }
                 SendMessage(Action.SendMessage, IDs.Count.ToString() + " Finger Print(s) Matched.");
-                count = 0;
+                SendMessage(Action.SendMessage, "Click the button below to show results or place thumb to search again.");
 
                 if (IDs.Count > 0)
                 {
