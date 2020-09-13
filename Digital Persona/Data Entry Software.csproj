@@ -91,6 +91,12 @@
       <DependentUpon>Capabilities.cs</DependentUpon>
     </Compile>
     <Compile Include="Database.cs" />
+    <Compile Include="Edit_Data.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Edit_Data.Designer.cs">
+      <DependentUpon>Edit_Data.cs</DependentUpon>
+    </Compile>
     <Compile Include="Fingerprint.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -159,6 +165,9 @@
     </Compile>
     <EmbeddedResource Include="Capabilities.resx">
       <DependentUpon>Capabilities.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Edit_Data.resx">
+      <DependentUpon>Edit_Data.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Fingerprint.resx">
       <DependentUpon>Fingerprint.cs</DependentUpon>

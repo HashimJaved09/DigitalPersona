@@ -21,12 +21,6 @@ namespace UareUSampleCSharp
             InitializeComponent();
 
             this.IDs = list;
-
-            dt.Columns.Add("iPersonID");
-            dt.Columns.Add("Name");
-            dt.Columns.Add("CNIC_Number");
-            dt.Columns.Add("Phone_Number");
-            dt.Columns.Add("Address");
         }
 
         private void SearchFingerPrint_Load(object sender, EventArgs e)
@@ -85,6 +79,16 @@ namespace UareUSampleCSharp
                 _showPerson.Dispose();
                 _showPerson = null;
             }
+        }
+
+        public void RelaodData()
+        {
+            dataGridView1.DataSource = null;
+            if (dataGridView1.Columns.Contains("Show_Details"))
+            {
+                dataGridView1.Columns.Remove("Show_Details");
+            }
+            getData();
         }
     }
 }

@@ -1,43 +1,47 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 using System.Threading;
-using System.Reflection;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using DPUruNet;
-using System.IO;
 using System.Drawing.Imaging;
 
 namespace UareUSampleCSharp
 {
-    public partial class Registration : Form
+    public partial class Edit_Data : Form
     {
-        /// <summary>
-        /// Holds the main form with many functions common to all of SDK actions.
-        /// </summary>
         public Form_Main _sender;
 
+        private int iPersonID;
+        Database db = new Database();
+        DataTable dataTable = new DataTable();
         List<Fmd> preenrollmentFmds;
         string selectedPath = "";
-        Byte[] image_file = {0x0};
-        string image_name = "";
-        string rightThumb = "";
+        Byte[] imgFile = { 0x0 };
+        string imgName = "";
+        string right_thumb = "";
+        string pathToWriteFile = "";
         int count;
 
-        public Registration()
+        public Edit_Data(object p)
         {
             InitializeComponent();
+            this.iPersonID = (int)p;
+            count = 0;
         }
 
-        private void Registration_Load(object sender, System.EventArgs e)
+        private void Edit_Data_Load(object sender, EventArgs e)
         {
             this.nameTextBox.Focus();
-            txtEnroll.Text = string.Empty;
             preenrollmentFmds = new List<Fmd>();
-            count = 0;
+
+            GetData();
 
             SendMessage(Action.SendMessage, "Place your Right Thumb on the device.");
 
@@ -62,83 +66,45 @@ namespace UareUSampleCSharp
                 this.deviceNotConnected.Visible = false;
         }
 
-        private void submitBtn_Click(object sender, EventArgs e)
+        private void GetData()
         {
             try
             {
-                int status = 0;
-                Database db = new Database();
-                string nameDTO = this.nameTextBox.Text.Trim();
-                string guardianDTO = guardianTextBox.Text.Replace("-", "");
-                string cnicDTO = cnicTextBox.Text.Replace("-", "");
-                string phoneDTO = this.phoneTextBox.Text.Replace("-", "");
-                string addressDTO = this.addressTextBox.Text.Trim();
-                string notesDTO = this.notesTextBox.Text.Trim();
-                string rightThumbDTO = this.rightThumb;
-                string imageNameDTO = this.image_name.Trim();
-                byte[] imageFileDTO = this.image_file;
+                this.dataTable = db.getPerson(this.iPersonID);
 
-                if (this.nameTextBox.Text.Trim() == "" || this.nameTextBox.Text.Trim() == null || this.nameTextBox.Text.Trim().Length < 3)
+                if (dataTable.Rows.Count > 0)
                 {
-                    MessageBox.Show("Please Enter Name. Minimum Length of Name is 3 Characters.");
-                    this.nameTextBox.Focus();
-                    return;
-                }
-                if (this.guardianTextBox.Text.Replace("-", "") == null || (this.guardianTextBox.Text.Replace("-", "").Replace(" ", "").Length > 0 && this.guardianTextBox.Text.Replace("-", "").Replace(" ", "").Length < 13))
-                {
-                    MessageBox.Show("Please Enter a Valid Guardian CNIC Number.");
-                    this.guardianTextBox.Focus();
-                    return;
-                }
-                if (this.cnicTextBox.Text.Replace("-", "") == "" || this.cnicTextBox.Text.Replace("-", "") == null || (this.cnicTextBox.Text.Replace("-", "").Replace(" ", "").Length > 0 && this.cnicTextBox.Text.Replace("-", "").Replace(" ", "").Length < 13))
-                {
-                    MessageBox.Show("Please Enter a Valid CNIC Number.");
-                    this.cnicTextBox.Focus();
-                    return;
-                }
-                if (this.phoneTextBox.Text.Replace("-", "") == null || (this.phoneTextBox.Text.Replace("-", "").Replace(" ", "").Length > 0 && this.phoneTextBox.Text.Replace("-", "").Replace(" ", "").Length < 11))
-                {
-                    MessageBox.Show("Please Enter a Valid Phone Number.");
-                    this.phoneTextBox.Focus();
-                    return;
-                }
+                    this.nameTextBox.Text = dataTable.Rows[0]["Name"].ToString();
+                    this.cnicTextBox.Text = dataTable.Rows[0]["CNIC_Number"].ToString();
+                    this.guardianTextBox.Text = dataTable.Rows[0]["Guardian_CNIC"].ToString();
+                    this.phoneTextBox.Text = dataTable.Rows[0]["Phone_Number"].ToString();
+                    this.addressTextBox.Text = dataTable.Rows[0]["Address"].ToString();
+                    this.notesTextBox.Text = dataTable.Rows[0]["Notes"].ToString();
+                    this.imgName = dataTable.Rows[0]["Image_Name"].ToString();
+                    this.imgFile = (byte[])dataTable.Rows[0]["Image_File"];
+                    this.right_thumb = dataTable.Rows[0]["Right_Thumb"].ToString();
 
-                if (this.rightThumb == "" && this._sender.CurrentReader != null)
-                {
-                    DialogResult dr = MessageBox.Show("Save without scanning thumb impression?", "Confirmation", MessageBoxButtons.YesNo);
-                    if (dr == DialogResult.Yes)
+                    if (this.imgName.Length > 0 || this.imgFile.Length > 1)
                     {
-                        status = db.insertData(nameDTO, guardianDTO, cnicDTO, phoneDTO, addressDTO, notesDTO, rightThumbDTO, imageNameDTO, imageFileDTO);
-                    }
-                    else
-                    {
-                        return;
+                        string ext = this.imgName.Split('.').Last();
+                        string picturesFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+
+                        pathToWriteFile = picturesFolderPath + "\\" + this.cnicTextBox.Text + "." + ext;
+
+                        if (!File.Exists(pathToWriteFile))
+                            File.WriteAllBytes(pathToWriteFile, this.imgFile);
+
+                        this.picture.Image = Image.FromFile(pathToWriteFile);
                     }
                 }
                 else
                 {
-                    status = db.insertData(nameDTO, guardianDTO, cnicDTO, phoneDTO, addressDTO, notesDTO, rightThumbDTO, imageNameDTO, imageFileDTO);
-                }
-
-                if (status == 1)
-                {
-                    MessageBox.Show("Data Inserted Successfully!");
-                    ClearFeilds();
-                }
-                else if (status == -1)
-                {
-                    MessageBox.Show("CNIC Already Registered.");
-                    this.cnicTextBox.Focus();
-                }
-                else if (status == 0)
-                {
-                    MessageBox.Show("Data did not save successfully.");
+                    MessageBox.Show("No Match Found!");
                 }
             }
             catch (Exception error)
             {
-                MessageBox.Show("Error occured please try again.");
-                Console.WriteLine("Error: " + error.ToString());
+                Console.WriteLine("Error while Fetching Person: " + error.ToString());
             }
         }
 
@@ -165,13 +131,13 @@ namespace UareUSampleCSharp
                 t.Start();
                 t.Join();
 
-                image_name = selectedPath;
+                imgName = selectedPath;
 
-                if (!image_name.Equals(""))
+                if (!imgName.Equals(""))
                 {
-                    image_file = File.ReadAllBytes(selectedPath);
+                    imgFile = File.ReadAllBytes(selectedPath);
 
-                    this.picture.Image = Image.FromFile(image_name);
+                    this.picture.Image = Image.FromFile(imgName);
                 }
             }
             catch (Exception ex)
@@ -180,14 +146,91 @@ namespace UareUSampleCSharp
             }
         }
 
-        private void Registration_Closed(object sender, System.EventArgs e)
+        private void submitBtn_Click(object sender, EventArgs e)
         {
             try
             {
-                if (!this.image_name.Equals(""))
+                int status = 0;
+                string nameDTO = this.nameTextBox.Text.Trim();
+                string guardianDTO = guardianTextBox.Text.Replace("-", "");
+                string cnicDTO = cnicTextBox.Text.Replace("-", "");
+                string phoneDTO = this.phoneTextBox.Text.Replace("-", "");
+                string addressDTO = this.addressTextBox.Text.Trim();
+                string notesDTO = this.notesTextBox.Text.Trim();
+                string rightThumbDTO = this.right_thumb;
+                string imageNameDTO = this.imgName.Trim();
+                byte[] imageFileDTO = this.imgFile;
+
+                if (this.nameTextBox.Text.Trim() == "" || this.nameTextBox.Text.Trim() == null || this.nameTextBox.Text.Trim().Length < 3)
+                {
+                    MessageBox.Show("Please Enter Name. Minimum Length of Name is 3 Characters.");
+                    this.nameTextBox.Focus();
+                    return;
+                }
+                if (this.guardianTextBox.Text.Replace("-", "") == null || (this.guardianTextBox.Text.Replace("-", "").Replace(" ", "").Length > 0 && this.guardianTextBox.Text.Replace("-", "").Replace(" ", "").Length < 13))
+                {
+                    MessageBox.Show("Please Enter a Valid Guardian CNIC Number.");
+                    this.guardianTextBox.Focus();
+                    return;
+                }
+                if (this.cnicTextBox.Text.Replace("-", "") == "" || this.cnicTextBox.Text.Replace("-", "") == null || (this.cnicTextBox.Text.Replace("-", "").Replace(" ", "").Length > 0 && this.cnicTextBox.Text.Replace("-", "").Replace(" ", "").Length < 13))
+                {
+                    MessageBox.Show("Please Enter a Valid CNIC Number.");
+                    this.cnicTextBox.Focus();
+                    return;
+                }
+                if (this.phoneTextBox.Text.Replace("-", "") == null || (this.phoneTextBox.Text.Replace("-", "").Replace(" ", "").Length > 0 && this.phoneTextBox.Text.Replace("-", "").Replace(" ", "").Length < 11))
+                {
+                    MessageBox.Show("Please Enter a Valid Phone Number.");
+                    this.phoneTextBox.Focus();
+                    return;
+                }
+
+                if (rightThumbDTO == "" && _sender.CurrentReader != null)
+                {
+                    DialogResult dr = MessageBox.Show("Save without scanning thumb?", "Confirmation", MessageBoxButtons.YesNo);
+                    if (dr == DialogResult.Yes)
+                    {
+                        status = db.updatePerson(iPersonID, nameDTO, guardianDTO, cnicDTO, phoneDTO, addressDTO, notesDTO, rightThumbDTO, imageNameDTO, imageFileDTO);
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    status = db.updatePerson(iPersonID, nameDTO, guardianDTO, cnicDTO, phoneDTO, addressDTO, notesDTO, rightThumbDTO, imageNameDTO, imageFileDTO);
+                }
+
+                if (status == 1)
+                {
+                    MessageBox.Show("Data Updated Successfully!");
+                }
+                else if (status == 0)
+                {
+                    MessageBox.Show("CNIC Already Registered.");
+                    this.cnicTextBox.Focus();
+                }
+            }
+            catch (Exception error)
+            {
+                MessageBox.Show("Error occured please try again.");
+                Console.WriteLine("Error: " + error.ToString());
+            }
+        }
+
+        private void Edit_Data_Closed(object sender, System.EventArgs e)
+        {
+            try
+            {
+                if (!this.imgName.Equals(""))
                 {
                     this.picture.Image.Dispose();
                 }
+
+                if (!File.Exists(pathToWriteFile))
+                    File.Delete(pathToWriteFile);
             }
             catch (Exception error)
             {
@@ -231,44 +274,19 @@ namespace UareUSampleCSharp
                             this.enrollPictureBox.Refresh();
                             break;
                         case Action.WindowEnlargement:
-                            //this.okButton.Visible = true;
-                            //this.enrollPictureBox.Visible = true;
-                            //this.Size = new Size(674, 312);
                             break;
                         case Action.UpdateReaderState:
                             if ((Reader)payload != null)
                             {
                                 this.txtEnroll.Visible = true;
                                 this.enrollPictureBox.Visible = true;
-                                //txtReaderSelected.Text = ((Reader)payload).Description.SerialNumber;
-                                //btnCapture.Enabled = true;
-                                //btnStreaming.Enabled = true;
-                                //btnVerify.Enabled = true;
-                                //btnIdentify.Enabled = true;
-                                //btnEnroll.Enabled = true;
-                                //btnEnrollmentControl.Enabled = true;
-
-                                //this.buttonFingerPrint.Enabled = true;
-
-                                //if (fmds.Count > 0)
-                                //{
-                                //    btnIdentificationControl.Enabled = true;
-                                //}
+                                this.deviceNotConnected.Visible = false;
                             }
                             else
                             {
                                 this.txtEnroll.Visible = false;
                                 this.enrollPictureBox.Visible = false;
-                                //txtReaderSelected.Text = String.Empty;
-                                //btnCapture.Enabled = false;
-                                //btnStreaming.Enabled = false;
-                                //btnVerify.Enabled = false;
-                                //btnIdentify.Enabled = false;
-                                //btnEnroll.Enabled = false;
-                                //btnEnrollmentControl.Enabled = false;
-                                //btnIdentificationControl.Enabled = false;
-
-                                //this.buttonFingerPrint.Enabled = false;
+                                this.deviceNotConnected.Visible = true;
                             }
                             break;
                         default:
@@ -359,7 +377,7 @@ namespace UareUSampleCSharp
                         preenrollmentFmds.Clear();
                         count = 0;
 
-                        this.rightThumb = Fmd.SerializeXml(resultConversion.Data);
+                        this.right_thumb = Fmd.SerializeXml(resultConversion.Data);
 
                         return;
                     }
@@ -380,20 +398,6 @@ namespace UareUSampleCSharp
                 // Send error message, then close form
                 SendMessage(Action.SendMessage, "Error:  " + ex.Message);
             }
-        }
-
-        private void ClearFeilds()
-        {
-            this.nameTextBox.Text = "";
-            this.guardianTextBox.Text = "";
-            this.cnicTextBox.Text = "";
-            this.phoneTextBox.Text = "";
-            this.addressTextBox.Text = "";
-            this.notesTextBox.Text = "";
-            this.txtEnroll.Text = "";
-            this.picture.Image = null;
-            this.enrollPictureBox.Image = null;
-            SendMessage(Action.SendMessage, "Place your Right Thumb on the device.");
         }
 
         #endregion

@@ -18,27 +18,39 @@ namespace UareUSampleCSharp
         public ShowPersons()
         {
             InitializeComponent();
+        }
 
+        private void ShowPersons_Load(object sender, EventArgs e)
+        {
             GetData();
         }
 
-        private void GetData()
+        public void GetData()
         {
             try
             {
                 dataTable = db.getPersons();
-                dataGridView1.DataSource = dataTable;
 
-                DataGridViewButtonColumn showDetailsButton = new DataGridViewButtonColumn();
-                showDetailsButton.HeaderText = "Show Details";
-                showDetailsButton.Name = "Show_Details";
-                showDetailsButton.Text = "Show Details";
-                showDetailsButton.UseColumnTextForButtonValue = true;
-
-                if (dataTable.Rows.Count > 0 && dataGridView1.Columns["Show_Details"] == null)
+                if (dataTable.Rows.Count > 0)
                 {
-                    dataGridView1.Columns.Add(showDetailsButton);
-                    this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
+                    dataGridView1.DataSource = dataTable;
+
+                    DataGridViewButtonColumn showDetailsButton = new DataGridViewButtonColumn();
+                    showDetailsButton.HeaderText = "Show Details";
+                    showDetailsButton.Name = "Show_Details";
+                    showDetailsButton.Text = "Show Details";
+                    showDetailsButton.UseColumnTextForButtonValue = true;
+
+                    if (dataTable.Rows.Count > 0 && dataGridView1.Columns["Show_Details"] == null)
+                    {
+                        dataGridView1.Columns.Add(showDetailsButton);
+                        this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("No Records Found!");
+                    this.Close();
                 }
             }
             catch(Exception error)

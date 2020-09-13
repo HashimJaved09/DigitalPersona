@@ -49,6 +49,8 @@ namespace UareUSampleCSharp
             this.okButton.Visible = false;
             this.enrollPictureBox.Visible = false;
             this.Size = new Size(374, 312);
+
+            this._sender = (Form_Main)Application.OpenForms["Form_Main"];
         }
 
         /// <summary>

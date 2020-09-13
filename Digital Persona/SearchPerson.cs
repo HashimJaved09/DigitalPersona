@@ -12,6 +12,8 @@ namespace UareUSampleCSharp
 {
     public partial class SearchPerson : Form
     {
+        public Form_Main _sender;
+
         DataTable dt = new DataTable();
         Database db = new Database();
 
@@ -24,7 +26,7 @@ namespace UareUSampleCSharp
         {
             try
             {
-                dt = db.searchPerson(this.nameTextBox.Text.Trim(), this.cnicTextBox.Text.Trim(), this.phoneTextBox.Text.Trim());
+                dt = db.searchPerson(this.nameTextBox.Text.Trim(), this.cnicTextBox.Text.Trim().Replace("-", "").Replace(" ", ""), this.phoneTextBox.Text.Trim().Replace("-", "").Replace(" ", ""), this.guardianTextBox.Text.Trim().Replace("-", "").Replace(" ", ""));
 
                 if (dt.Rows.Count > 0)
                 {
@@ -91,6 +93,16 @@ namespace UareUSampleCSharp
             }
         }
 
+        public void ClearData()
+        {
+            dataGridView1.DataSource = null;
+            if (dataGridView1.Columns.Contains("Show_Details"))
+            {
+                dataGridView1.Columns.Remove("Show_Details");
+            }
+            SendMessage(Action.Delarge, "");
+        }
+
         #region SendMessage
         private enum Action
         {
@@ -110,11 +122,11 @@ namespace UareUSampleCSharp
                 switch (state)
                 {
                     case Action.Enlarge:
-                        this.Size = new Size(700, 520);
+                        this.Size = new Size(700, 557);
                         this.dataGridView1.Visible = true;
                         break;
                     case Action.Delarge:
-                        this.Size = new Size(519, 370);
+                        this.Size = new Size(519, 407);
                         this.dataGridView1.Visible = false;
                         break;
                     default:

@@ -38,8 +38,6 @@ namespace UareUSampleCSharp
             txtIdentify.Text = string.Empty;
             anyFinger = null;
 
-            SendMessage(Action.SendMessage, "Place your Right Thumb on the device.");
-
             if (!_sender.OpenReader())
             {
                 this.Close();
@@ -140,6 +138,20 @@ namespace UareUSampleCSharp
             this.Close();
         }
 
+        private SearchFingerPrint _searchFingerPrint;
+        private void btnShowResult_Click(object sender, EventArgs e)
+        {
+            if (_searchFingerPrint == null)
+            {
+                _searchFingerPrint = new SearchFingerPrint(this.IDs);
+            }
+
+            _searchFingerPrint.ShowDialog();
+
+            _searchFingerPrint.Dispose();
+            _searchFingerPrint = null;
+        }
+
         /// <summary>
         /// Close window.
         /// </summary>
@@ -188,19 +200,5 @@ namespace UareUSampleCSharp
             }
         }
         #endregion
-        
-        private SearchFingerPrint _searchFingerPrint;
-        private void btnShowResult_Click(object sender, EventArgs e)
-        {
-            if (_searchFingerPrint == null)
-            {
-                _searchFingerPrint = new SearchFingerPrint(this.IDs);
-            }
-
-            _searchFingerPrint.ShowDialog();
-
-            _searchFingerPrint.Dispose();
-            _searchFingerPrint = null;
-        }
     }
 }

@@ -83,7 +83,6 @@
             // btnRegistration
             // 
             this.btnRegistration.BackColor = System.Drawing.SystemColors.Control;
-            this.btnRegistration.Enabled = false;
             this.btnRegistration.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnRegistration.Location = new System.Drawing.Point(12, 118);
             this.btnRegistration.Name = "btnRegistration";

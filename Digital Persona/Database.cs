@@ -130,7 +130,7 @@ namespace UareUSampleCSharp
             return rows;
         }
 
-        public DataTable searchPerson(string name, string cnic, string phone)
+        public DataTable searchPerson(string name, string cnic, string phone, string guardian)
         {
             DataTable dt = new DataTable();
             try
@@ -143,6 +143,7 @@ namespace UareUSampleCSharp
                 cmd.Parameters.AddWithValue("@name", name);
                 cmd.Parameters.AddWithValue("@cnic", cnic);
                 cmd.Parameters.AddWithValue("@phone", phone);
+                cmd.Parameters.AddWithValue("@guardian", guardian);
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 da.Fill(dt);
             }
@@ -181,6 +182,40 @@ namespace UareUSampleCSharp
             }
 
             return dt;
+        }
+
+        public int updatePerson(int iPersonID, string name, string guardian, string cnic, string phone, string address, string notes, string right_thumb, string imgName, byte[] imgFile)
+        {
+            int rows = 0;
+            try
+            {
+                OpenConnection(false);
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = connection;
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "UpdatePerson";
+                cmd.Parameters.AddWithValue("@iPersonID", iPersonID);
+                cmd.Parameters.AddWithValue("@name", name);
+                cmd.Parameters.AddWithValue("@guardian", guardian);
+                cmd.Parameters.AddWithValue("@cnic", cnic);
+                cmd.Parameters.AddWithValue("@phone", phone);
+                cmd.Parameters.AddWithValue("@address", address);
+                cmd.Parameters.AddWithValue("@notes", notes);
+                cmd.Parameters.AddWithValue("@right_thumb", right_thumb);
+                cmd.Parameters.AddWithValue("@image_name", imgName);
+                cmd.Parameters.AddWithValue("@image_file", imgFile);
+                rows = cmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            finally
+            {
+                CloseConnection();
+            }
+
+            return rows;
         }
 
 

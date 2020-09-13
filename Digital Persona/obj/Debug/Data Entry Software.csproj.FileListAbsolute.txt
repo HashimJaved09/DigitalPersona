@@ -1,0 +1,18 @@
+C:\Users\LENOVO T420\Documents\DigitalPersona Sample Code\Samples\UareUSampleCSharp\bin\Debug\Data Entry Software.exe.config
+C:\Users\LENOVO T420\Documents\DigitalPersona Sample Code\Samples\UareUSampleCSharp\bin\Debug\Data Entry Software.exe
+C:\Users\LENOVO T420\Documents\DigitalPersona Sample Code\Samples\UareUSampleCSharp\bin\Debug\Data Entry Software.pdb
+C:\Users\LENOVO T420\Documents\DigitalPersona Sample Code\Samples\UareUSampleCSharp\obj\Debug\UareUSampleCSharp.Capabilities.resources
+C:\Users\LENOVO T420\Documents\DigitalPersona Sample Code\Samples\UareUSampleCSharp\obj\Debug\UareUSampleCSharp.Edit_Data.resources
+C:\Users\LENOVO T420\Documents\DigitalPersona Sample Code\Samples\UareUSampleCSharp\obj\Debug\UareUSampleCSharp.Fingerprint.resources
+C:\Users\LENOVO T420\Documents\DigitalPersona Sample Code\Samples\UareUSampleCSharp\obj\Debug\UareUSampleCSharp.Form_Main.resources
+C:\Users\LENOVO T420\Documents\DigitalPersona Sample Code\Samples\UareUSampleCSharp\obj\Debug\UareUSampleCSharp.Identification.resources
+C:\Users\LENOVO T420\Documents\DigitalPersona Sample Code\Samples\UareUSampleCSharp\obj\Debug\UareUSampleCSharp.Properties.Resources.resources
+C:\Users\LENOVO T420\Documents\DigitalPersona Sample Code\Samples\UareUSampleCSharp\obj\Debug\UareUSampleCSharp.ReaderSelection.resources
+C:\Users\LENOVO T420\Documents\DigitalPersona Sample Code\Samples\UareUSampleCSharp\obj\Debug\UareUSampleCSharp.Registration.resources
+C:\Users\LENOVO T420\Documents\DigitalPersona Sample Code\Samples\UareUSampleCSharp\obj\Debug\UareUSampleCSharp.SearchFingerPrint.resources
+C:\Users\LENOVO T420\Documents\DigitalPersona Sample Code\Samples\UareUSampleCSharp\obj\Debug\UareUSampleCSharp.SearchPerson.resources
+C:\Users\LENOVO T420\Documents\DigitalPersona Sample Code\Samples\UareUSampleCSharp\obj\Debug\UareUSampleCSharp.ShowPerson.resources
+C:\Users\LENOVO T420\Documents\DigitalPersona Sample Code\Samples\UareUSampleCSharp\obj\Debug\UareUSampleCSharp.ShowPersons.resources
+C:\Users\LENOVO T420\Documents\DigitalPersona Sample Code\Samples\UareUSampleCSharp\obj\Debug\Data Entry Software.csproj.GenerateResource.Cache
+C:\Users\LENOVO T420\Documents\DigitalPersona Sample Code\Samples\UareUSampleCSharp\obj\Debug\Data Entry Software.exe
+C:\Users\LENOVO T420\Documents\DigitalPersona Sample Code\Samples\UareUSampleCSharp\obj\Debug\Data Entry Software.pdb

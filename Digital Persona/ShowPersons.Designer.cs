@@ -81,6 +81,7 @@
             this.Name = "ShowPersons";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Show All Records";
+            this.Load += new System.EventHandler(this.ShowPersons_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.localDataSet)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.localDataSetBindingSource)).EndInit();

@@ -87,6 +87,7 @@ namespace UareUSampleCSharp
             if (_searchPerson == null)
             {
                 _searchPerson = new SearchPerson();
+                _searchPerson._sender = this;
             }
 
             _searchPerson.ShowDialog();
@@ -134,17 +135,26 @@ namespace UareUSampleCSharp
         {
             reset = false;
             Constants.ResultCode result = Constants.ResultCode.DP_DEVICE_FAILURE;
-
-            // Open reader
-            result = currentReader.Open(Constants.CapturePriority.DP_PRIORITY_COOPERATIVE);
+            try
+            {
+                // Open reader
+                if (currentReader != null)
+                    result = currentReader.Open(Constants.CapturePriority.DP_PRIORITY_COOPERATIVE);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error occurred in Opening the Reader: " + ex.ToString());
+            }
 
             if (result != Constants.ResultCode.DP_SUCCESS)
             {
-                MessageBox.Show("Error:  " + result);
+                if (result == Constants.ResultCode.DP_DEVICE_FAILURE)
+                    MessageBox.Show("WARNING: Finger Print Device not Selected or Attached!");
+                else
+                    MessageBox.Show("Warning: " + result);
                 reset = true;
                 return false;
             }
-
             return true;
         }
 
@@ -155,8 +165,18 @@ namespace UareUSampleCSharp
         /// <returns>Returns true if successful; false if unsuccessful</returns>
         public bool StartCaptureAsync(Reader.CaptureCallback OnCaptured)
         {
-            // Activate capture handler
-            currentReader.On_Captured += new Reader.CaptureCallback(OnCaptured);
+            try
+            {
+                // Activate capture handler
+                if (currentReader != null)
+                    currentReader.On_Captured += new Reader.CaptureCallback(OnCaptured);
+                else
+                    return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error occurred in Activating the Reader: " + ex.ToString());
+            }
 
             // Call capture
             if (!CaptureFingerAsync())
@@ -261,7 +281,10 @@ namespace UareUSampleCSharp
             }
             catch(Exception ex)
             {
-                MessageBox.Show("Error:  " + ex.Message);
+                if (ex.ToString().Contains("Object reference not set to an instance of an object"))
+                    MessageBox.Show("Device not Selected or Attached!");
+                else
+                    MessageBox.Show("Error:  " + ex.Message);
                 return false;
             }
         }
@@ -319,14 +342,14 @@ namespace UareUSampleCSharp
                         if ((Reader)payload != null)
                         {
                             txtReaderSelected.Text = ((Reader)payload).Description.SerialNumber;
+                            //btnRegistration.Enabled = true;
                             btnIdentify.Enabled = true;
-                            btnRegistration.Enabled = true;
                         }
                         else
                         {
                             txtReaderSelected.Text = String.Empty;
+                            //btnRegistration.Enabled = false;
                             btnIdentify.Enabled = false;
-                            btnRegistration.Enabled = false;
                         }
                         break;
                     default:
